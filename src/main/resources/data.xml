@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GRAMMAR>
+    <KEY>
+        <el>output</el>
+        <el>input</el>
+        <el>do</el>
+        <el>until</el>
+        <el>loop</el>
+    </KEY>
+
+    <OPERATOR>
+        <rel>
+            <el>l</el>
+            <el>le</el>
+            <el>g</el>
+            <el>ge</el>
+            <el>e</el>
+            <el>ne</el>
+        </rel>
+
+        <as>
+            <el>assign</el>
+        </as>
+
+        <ao>
+            <el>plus</el>
+            <el>minus</el>
+        </ao>
+    </OPERATOR>
+
+</GRAMMAR>
