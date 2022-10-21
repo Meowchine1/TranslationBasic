@@ -11,85 +11,91 @@ import static java.lang.Character.*;
 public class Analaizer
 {
     private Grammar grammar;
-    public static Pattern operatorsPattern = Pattern.compile("[+-=><]");
+    public static Pattern operatorsPattern = Pattern.compile("[+=><-]");
     private ArrayList<Leksem> leksemInput = new ArrayList<>();
-    private StringBuilder buffer = new StringBuilder (); // Р±СѓС„РµСЂ
-    private int i = 0; // РўРµРєСѓС‰РµРµ С‡С‚РµРЅРёРµ РїРѕР·РёС†РёРё СЃРёРјРІРѕР»Р°
-    private char ch; // РЎРёРјРІРѕР»СЊРЅР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ, СЃРѕС…СЂР°РЅСЏРµРј С‚РѕР»СЊРєРѕ С‡С‚Рѕ РїСЂРѕС‡РёС‚Р°РЅРЅС‹Р№ СЃРёРјРІРѕР» РёСЃС…РѕРґРЅРѕР№ РїСЂРѕРіСЂР°РјРјС‹
-    private String strToken; // РњР°СЃСЃРёРІ СЃРёРјРІРѕР»РѕРІ, РІ РєРѕС‚РѕСЂРѕРј С…СЂР°РЅРёС‚СЃСЏ СЃС‚СЂРѕРєР° СЃРёРјРІРѕР»РѕРІ СЃР»РѕРІР°
-    private ArrayList<String> errors = new ArrayList <> (); // РЎРїРёСЃРѕРє РѕС€РёР±РѕРє
-
+    private String buffer = ""; // буфер
+    private int i = 0; // Текущее чтение позиции символа
+    private char ch; // Символьная переменная, сохраняем только что прочитанный символ исходной программы
+    private String strToken; // Массив символов, в котором хранится строка символов слова
+    private ArrayList<String> errors = new ArrayList <> (); // Список ошибок
+    private ArrayList<String> codeLists = new ArrayList<>();
     /**
-     * РџСЂРѕС‡РёС‚Р°С‚СЊ СѓРєР°Р·Р°РЅРЅС‹Р№ РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ
-     * @param fileSrc РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ РґР»СЏ С‡С‚РµРЅРёСЏ
+     * Прочитать указанный путь к файлу
+     * @param fileSrc путь к файлу для чтения
      */
-    public Analaizer(Grammar grammar, String fileSrc)
-    {
+    public Analaizer(Grammar grammar, String fileSrc) throws IOException {
         this.grammar = grammar;
-        ReadFile.readFile(buffer, fileSrc);
+        ReadFile.readFile(codeLists, fileSrc);
+    }
+
+    public void print(){
+        for(Leksem l : leksemInput){
+            System.out.println(l.toString());
+        }
     }
 
     /**
-     * РџСЂРѕС†РµСЃСЃ Р»РµРєСЃРёС‡РµСЃРєРѕРіРѕ Р°РЅР°Р»РёР·Р°
+     * Процесс лексического анализа
      * @throws IOException
      */
-    public void analyze(List<StringBuilder> codeLists) throws IOException
+    public void analyze() throws IOException
     {
         strToken = "";
 
         BIG_LOOP:
         for(int row = 0; row < codeLists.size(); row++)
         {
-            buffer = codeLists.get (row); // С‚РµРєСѓС‰Р°СЏ СЃС‚СЂРѕРєР°
+            buffer = codeLists.get(row); // текущая строка
             i = 0;
-            // System.out.println (row + "" + buffer.length ()); // РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё С‚РµСЃС‚РёСЂРѕРІР°РЅРёРё, РїРѕРєР°Р·С‹РІР°РµС‚ РґР»РёРЅСѓ РєР°Р¶РґРѕР№ СЃС‚СЂРѕРєРё РєРѕРґР°
+            // System.out.println (row + "" + buffer.length ()); // Используется при тестировании, показывает длину каждой строки кода
             while(i < buffer.length())
             {
+                strToken = "";
                 getChar();
-                skipWhiteCharacter (); // РїСЂРѕРїСѓСЃРєР°РµРј СЃРёРјРІРѕР»С‹ РїСЂРѕР±РµР»Р°
-                if (isLetter (ch)) // РµСЃР»Рё ch - Р±СѓРєРІР°
+                skipWhiteCharacter (); // пропускаем символы пробела
+                if (isLetter (ch)) // если ch - буква
                 {
-                    while (isLetterOrDigit (ch)) // РґРѕРїСѓСЃС‚РёРјС‹Рµ СЃР»РѕРІР° РјРѕРіСѓС‚ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ Р±СѓРєРІ Рё СЃРѕРґРµСЂР¶Р°С‚СЊ С‡РёСЃР»Р°
+                    while (isLetterOrDigit (ch)) // допустимые слова могут начинаться с букв и содержать числа
                     {
-                        strToken += ch; // РїСЂРѕРґРѕР»Р¶Р°РµРј РЅР°РєР°РїР»РёРІР°С‚СЊ
+                        strToken += ch; // продолжаем накапливать
                         getChar();
                     }
-                    retract (); // Р’С‹СЃРєР°РєРёРІР°РµРј РёР· С†РёРєР»Р° Рё РЅСѓР¶РЅРѕ РІРµСЂРЅСѓС‚СЊСЃСЏ Рє РїРµСЂСЃРѕРЅР°Р¶Сѓ
+                    retract (); // Выскакиваем из цикла и нужно вернуться к персонажу
                     if(grammar.isKeyWord(strToken)){
-                        leksemInput.add(grammar.getKeyword(strToken)); // strToken - РєР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ
+                        leksemInput.add(grammar.getKeyword(strToken)); // strToken - ключевое слово
                     }
 
                     else{
-                        grammar.addIdentifier(strToken);  // strToken - СЌС‚Рѕ РѕР±С‰РёР№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
+                        grammar.addIdentifier(strToken);  // strToken - это общий идентификатор
                         leksemInput.add(grammar.getIdentifier(strToken));
                     }
 
                     strToken = "";
                 }
-                else if (isDigit (ch)) // РµСЃР»Рё ch - С‡РёСЃР»Рѕ
+                else if (isDigit (ch)) // если ch - число
                 {
-                    while (isDigit (ch)) // С‡РёС‚Р°РµРј С†РµР»РѕРµ С‡РёСЃР»Рѕ
+                    while (isDigit (ch)) // читаем целое число
                     {
-                        strToken += ch; // РїСЂРѕРґРѕР»Р¶Р°РµРј РЅР°РєР°РїР»РёРІР°С‚СЊ
+                        strToken += ch; // продолжаем накапливать
                         getChar();
                     }
-                    // РїРѕСЃР»Рµ РІС‹С…РѕРґР° РёР· С†РёРєР»Р°
-                    if (! isLetter (ch)) // Р•СЃР»Рё РЅРѕРјРµСЂ РЅР°С‡РёРЅР°РµС‚СЃСЏ
+                    // после выхода из цикла
+                    if (! isLetter (ch)) // Если номер начинается
                     {
-                        retract (); // РЅРµРґРѕРїСѓСЃС‚РёРјРѕ, РЅСѓР¶РЅРѕ РІРµСЂРЅСѓС‚СЊСЃСЏ
+                        retract (); // недопустимо, нужно вернуться
                         grammar.addConstant(strToken);
                         leksemInput.add(grammar.getConstant(strToken));
                     }
                     else{
-                        // РёСЃРєР»СЋС‡РµРЅРёРµ
+                        // исключение
                     }
 
                     strToken = "";
                 }
 
-                else if (operatorsPattern.matcher(String.valueOf(ch)).find()) // РѕРїРµСЂР°С‚РѕСЂ СЂР°Р·РґРµР»РёС‚РµР»Рё
+                else if (operatorsPattern.matcher(String.valueOf(ch)).find()) // оператор разделители
                 {
-                    while(operatorsPattern.matcher(String.valueOf(ch)).find()){
+                    while(operatorsPattern.matcher(String.valueOf(ch)).find()){//  =не должен заходить
                         strToken += ch;
                         getChar();
                     }
@@ -97,7 +103,7 @@ public class Analaizer
                     leksemInput.add(grammar.getOperator(strToken));
                 }
 
-                else if (grammar.isSeparators (ch)) // РµСЃР»Рё СЌС‚Рѕ СЂР°Р·РґРµР»РёС‚РµР»СЊ
+                else if (grammar.isSeparators (ch)) // если это разделитель
                 {
                     writeFile("separators", "" + ch);
                 }
@@ -109,11 +115,11 @@ public class Analaizer
                 else
                 {
                 writeFile("error", "" + ch);
-                if (ch == ' ') // Р•СЃР»Рё РїРѕСЃР»Рµ РїСЂРѕРїСѓСЃРєР° РїСЂРѕР±РµР»РѕРІ РІСЃРµ РµС‰Рµ РѕР±РЅР°СЂСѓР¶РёРІР°СЋС‚СЃСЏ РїСЂРѕР±РµР»С‹, С‚РµРєСѓС‰Р°СЏ СЃС‚СЂРѕРєР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРєРѕРјРїРёР»РёСЂРѕРІР°РЅР°
+                if (ch == ' ') // Если после пропуска пробелов все еще обнаруживаются пробелы, текущая строка не может быть скомпилирована
                 {
 
                 }
-                else // Р’ С‚РµРєСѓС‰РµР№ СЃС‚СЂРѕРєРµ РЅРµРґРѕРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹
+                else // В текущей строке недопустимые символы
                     errors.add(new String("At line " + (row + 1) + ": unable to identify \'" + ch + "\'."));
             }
             }
@@ -121,8 +127,8 @@ public class Analaizer
     }
 
     /**
-     * РџСЂРѕС‡С‚РёС‚Рµ СЃР»РµРґСѓСЋС‰РёР№ РІРІРѕРґРёРјС‹Р№ СЃРёРјРІРѕР» РІ ch Рё РїРµСЂРµРјРµСЃС‚РёС‚Рµ РёРЅРґРёРєР°С‚РѕСЂ РїРѕРёСЃРєР° РЅР° РѕРґРёРЅ СЃРёРјРІРѕР» РІРїРµСЂРµРґ
-     * (Р’РёСЂС‚СѓР°Р»СЊРЅР°СЏ РјР°С€РёРЅР° РѕРїС‚РёРјРёР·РёСЂСѓРµС‚ РјРµС‚РѕРґ РІРѕ РІСЃС‚СЂРѕРµРЅРЅС‹Р№ РјРµС‚РѕРґ)
+     * Прочтите следующий вводимый символ в ch и переместите индикатор поиска на один символ вперед
+     * (Виртуальная машина оптимизирует метод во встроенный метод)
      */
     public void getChar()
     {
@@ -130,17 +136,17 @@ public class Analaizer
     }
 
     /**
-     * РџСЂРѕРІРµСЂСЊС‚Рµ, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЃРёРјРІРѕР» РІ ch РїСѓСЃС‚С‹Рј, РµСЃР»Рё РґР°, РїСЂРѕРґРѕР»Р¶Р°Р№С‚Рµ РІС‹Р·С‹РІР°С‚СЊ getChar (), РїРѕРєР° РЅРµ Р±СѓРґРµС‚ РѕР±РЅР°СЂСѓР¶РµРЅ РЅРµРїСѓСЃС‚РѕР№ СЃРёРјРІРѕР»
+     * Проверьте, является ли символ в ch пустым, если да, продолжайте вызывать getChar (), пока не будет обнаружен непустой символ
      */
     public void skipWhiteCharacter()
     {
-        while (Character.isWhitespace (ch) && i <buffer.length () - 2) // РћРїСЂРµРґРµР»СЏРµРј, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌС‚Рѕ РїСѓСЃС‚С‹Рј СЃРёРјРІРѕР»РѕРј. Р’РєР»СЋС‡Р°СЏ СЂР°Р·СЂС‹РІС‹ СЃС‚СЂРѕРє, РїСЂРѕР±РµР»С‹, С‚Р°Р±СѓР»СЏС†РёРё
+        while (Character.isWhitespace (ch) && i <buffer.length () - 2) // Определяем, является ли это пустым символом. Включая разрывы строк, пробелы, табуляции
             getChar();
     }
 
     /**
-     * РћС‚СЃР»РµР¶РёРІР°РЅРёРµ СЃ РІРѕР·РІСЂР°С‚РѕРј: РѕР±СЂР°С‚РЅС‹Р№ РІС‹Р·РѕРІ РёРЅРґРёРєР°С‚РѕСЂР° РїРѕРёСЃРєР° РЅР° РїРѕР·РёС†РёСЋ СЃРёРјРІРѕР»Р° Рё СЃР±СЂРѕСЃ Р·РЅР°С‡РµРЅРёСЏ ch РЅР° РїСѓСЃС‚РѕРµ СЃР»РѕРІРѕ
-     * (Р’РёСЂС‚СѓР°Р»СЊРЅР°СЏ РјР°С€РёРЅР° РѕРїС‚РёРјРёР·РёСЂСѓРµС‚ РјРµС‚РѕРґ РІРѕ РІСЃС‚СЂРѕРµРЅРЅС‹Р№ РјРµС‚РѕРґ)
+     * Отслеживание с возвратом: обратный вызов индикатора поиска на позицию символа и сброс значения ch на пустое слово
+     * (Виртуальная машина оптимизирует метод во встроенный метод)
      */
     public void retract()
     {
@@ -149,9 +155,9 @@ public class Analaizer
     }
 
     /**
-     * Р—Р°РїРёС€РёС‚Рµ С„Р°Р№Р» РїРѕ Р±РёРЅР°СЂРЅРѕРјСѓ РїСЂР°РІРёР»Сѓ
-     * @param type СЃРёРјРІРѕР»СЊРЅС‹Р№ С‚РёРї
-     * @param s С‚РµРєСѓС‰РёР№ СЃРёРјРІРѕР»
+     * Запишите файл по бинарному правилу
+     * @param type символьный тип
+     * @param s текущий символ
      */
     public void writeFile(String type, String s)
     {
@@ -159,14 +165,14 @@ public class Analaizer
     }
 
     /**
-     * РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РѕС€РёР±РѕРє
-     * @return СЃРїРёСЃРѕРє РѕС€РёР±РѕРє (С†РµР»Р°СЏ СЃС‚СЂРѕРєР°)
+     * Получить список ошибок
+     * @return список ошибок (целая строка)
      */
     public String getErrors()
     {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < this.errors.size(); i++)
-            sb.append (this.errors.get (i) + "\n"); // РћР±СЉРµРґРёРЅСЏРµРј РІСЃРµ СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєР°С… РІ РѕРґРЅСѓ (РјРЅРѕРіРѕСЃС‚СЂРѕС‡РЅСѓСЋ) СЃС‚СЂРѕРєСѓ
+            sb.append (this.errors.get (i) + "\n"); // Объединяем все сообщения об ошибках в одну (многострочную) строку
 
         return sb.toString();
     }

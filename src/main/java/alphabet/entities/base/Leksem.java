@@ -15,6 +15,11 @@ public class Leksem {
         this.isDelimiter = isDelimiter;
     }
 
+    @Override
+    public String toString() {
+        return "id= " + id + " symbol = "+ symbol ;
+    }
+
     public int getId() {
         return id;
     }

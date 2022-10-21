@@ -1,5 +1,8 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
+import org.apache.commons.io.FileUtils;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 class ReadFile
 {
@@ -8,18 +11,18 @@ class ReadFile
      * @param buffer buffer
      * @param fileSrc путь к файлу
      */
-    public static void readFile(StringBuilder buffer, String fileSrc)
-    {
-        try(BufferedReader br = new BufferedReader(new FileReader(fileSrc)))
-        {
-            String temp = "";
-            while((temp = br.readLine()) != null)
-                buffer.append(temp).append('\n');
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+    public static void readFile(ArrayList<String> buffer, String fileSrc) throws IOException {
+
+       try{
+           Scanner scanner = new Scanner(new File(fileSrc));
+           while (scanner.hasNextLine()){
+               buffer.add(scanner.nextLine() + "\n");
+
+           }
+       } catch (FileNotFoundException e) {
+           throw new RuntimeException(e);
+       }
+
     }
 
 }
