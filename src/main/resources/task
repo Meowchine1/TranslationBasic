@@ -6,7 +6,128 @@ output вывод на экран значение следующей (?)
 input - класть значение
 
 пробел, табуляция, возврат коретки, перевод строки
+P - операнд
+OP - оператор
 
-Вопросы:
-Что значит таблица ижентификаторов и констант?
+СЛОЖНОСТЬ 1
+<L> → <P> | <P><CMP><P>
+<CMP> → < | > | <= | >= | = | <>
+<P> → <ID>|<CONST>
+    <OP> → <ID> = <AV>
+    <AV> → <P> | <P><AO><AV>
+    <AO> → +|-
+
+Расширенная бэкусовая нормальная форма
+<L>   →  <P> | <P><CMP><P>
+<CMP> →  < | > | <= | >= | = | <>
+<P>   →  <ID> | <CONST>
+<OP>  →  <ID> = <P>{<AO><P>}
+<AV>  →  <P> {<AO><P>}
+<AO>  →   +|-
+
+
+
+КОНСТРУКЦИЯ
+
+1) do until <L>
+<OP>
+loop
+
+2) do until <P> | <P>[< | > | <= | >= | = | <>]<P>
+<ID> = <AV>
+loop
+
+3) do until <ID>|<CONST> | <ID>|<CONST>[< | > | <= | >= | = | <>]<ID>|<CONST>
+<ID> = <P> | <P><AO><AV>
+loop
+
+4) do until <ID>|<CONST> | <ID>|<CONST>[< | > | <= | >= | == | <>]<ID>|<CONST>
+<ID> = <P> | <P>+|-<AV>
+loop
+
+Задание констант перечислимого типа
+ID
+CONST
+ASSING  =
+PLUS    +
+MINUS   -
+LESS    <
+GREATER >
+LE      <=
+GE      >=
+NE      <>
+
+
+Нетерминальные символы
+
+DoUntilStatement - do until
+Condition -        <L>  → <P> | <P><CMP><P>
+Statement -        <OP> → <ID> = <P>{<AO><P>}
+RelExpr – выражение сравнения(!)
+Operand   – операнд выражения
+LogicalOp - логическая операция
+Statement – оператор языка =
+ArithExpr - арифметическое выражение
+
+<DoUntilStatement> -> do until <Condition>  <Statement>  loop
+<Condition>     → <Operand> | <Condition><CMP><Operand>
+<Operand>       → id | const
+<CMP>           → < | > | <= | >= | == | <>
+<Statement>     → ID = <ArithExpr>
+<ArithExpr>     → <Operand> | <ArithExpr> ao <Operand>
+
+
+
+THEN:
+<DoUntilStatement>  -> do until <Condition>  <Statement>  loop
+
+<Condition>  → <CMP>|<Condition>[== | <>]<CMP>
+<CMP>        → <Operand> |<Operand>[< | <= | > | >=]<Operand>
+<Operand>    → ID | CONST
+<Statement>  → <ID> = <ArithExpr>
+<ArithExpr>  → <Operand> | <ArithExpr> [+|-] <Operand>
+
+RESULT:
+<DoUntilStatement>  -> do until <Condition>  <Statement>  loop
+
+<Condition>  → <CMP> | <Condition1>
+<Condition1> → [== | <>]<CMP><Condition1> | ε
+<CMP>        → <Operand><CMP1>
+<CMP1>       → [<|<=|>|>=] <Operand> | ε
+<Operand>    → ID | CONST
+<Statement>  → <ID> = <ArithExpr>
+<ArithExpr>  → <Operand><ArithExpr1>
+<ArithExpr1> → +|- <Operand><ArithExpr1> | ε
+
+нотация Бэкуса-Наура:
+<DoUntilStatement>  -> do until <Condition>  <Statement>  loop
+<Condition>  → <CMP>{[== | <>] <CMP>}
+<CMP>        → <Operand>[[<|<=|>|>=] <Operand>]
+<Operand>    → ID | CONST
+<Statement>  → <ID> = <ArithExpr>
+<ArithExpr>  → <Operand> {+|- <Operand>}
+
+
+
+Итог:
+rel = < | > | <= | >= | == | <>
+ao  = + | -
+<DoUntilStatement>  -> do until <Condition>  <Statement>  loop
+<Condition>     → <Operand>|<Operand> rel <Operand>
+<Operand>       → ID | CONST
+<Statement>     → ID = <ArithExpr>
+<ArithExpr>     → <Operand> | <ArithExpr> ao <Operand>
+
+приоритеты:
+<REL1> → < <= > >=
+<REL2> → == <>
+
+нотация Бэкуса
+
+<DoUntilStatement>  -> do until <Condition>  <Statement>  loop
+<Condition>     → <Operand>|<Operand> rel <Operand>
+<Operand>       → ID | CONST
+<Statement>     → ID = <ArithExpr>
+<ArithExpr>     → <Operand> | <ArithExpr> ao <Operand>
+
 
