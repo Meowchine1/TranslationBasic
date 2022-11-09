@@ -1,6 +1,9 @@
 import alphabet.entities.base.Category;
 import alphabet.entities.base.Leksem;
 import alphabet.entities.base.Type;
+import exceptions.ConstValueException;
+import exceptions.IdSizeException;
+
 import java.util.ArrayList;
 import java.util.Objects;
 public class Grammar {
@@ -47,7 +50,7 @@ public class Grammar {
         }
 
         public Leksem getKeyword(String value){
-            return keyWords.stream().filter(x -> x.getSymbol().equals(value)).findFirst().orElseThrow();
+            return keyWords.stream().filter(x -> x.getSymbol().equals(value.toLowerCase())).findFirst().orElseThrow();
         }
 
         public Leksem getOperator(String value){
@@ -55,34 +58,43 @@ public class Grammar {
         }
 
         public Leksem getConstant(String value){
-            return constants.stream().filter(x -> x.getSymbol().equals(value)).findFirst().orElseThrow();
+            return constants.stream().filter(x -> x.getSymbol().equals(value.toLowerCase())).findFirst().orElseThrow();
         }
         public Leksem getIdentifier(String value){
-            return identifiers.stream().filter(x -> x.getSymbol().equals(value)).findFirst().orElseThrow();
+            return identifiers.stream().filter(x -> x.getSymbol().equals(value.toLowerCase())).findFirst().orElseThrow();
+        }
+//[-32768; 32768]
+        public void addConstant(String value) throws ConstValueException {
+            int intValue = Integer.parseInt(value);
+            if( intValue >= -32768 & intValue <= 32768 ){
+                if(!constExist(value)){
+                    Leksem constant = new Leksem(Main.id++, value.toLowerCase(), Category.CONSTANT, Type.CONSTANT, false);
+                    constants.add(constant);
+                }
+            }
+            else{
+                 throw new ConstValueException("Const isnt in diapazone");
+            }
         }
 
-        public void addConstant(String value){
-            if(!constExist(value)){
-                Leksem constant = new Leksem(Main.id++, value, Category.CONSTANT, Type.CONSTANT, false);
-                constants.add(constant);
+        public void addIdentifier(String value) throws IdSizeException {
+            if(value.length() > 255){
+                throw new IdSizeException("Id size is too big");
             }
-
-        }
-
-        public void addIdentifier(String value){
-            if(!idExist(value)){
-                Leksem identifier = new Leksem(Main.id++, value, Category.IDENTIFIER, Type.IDENTIFIER, false);
-                identifiers.add(identifier);
+            else{
+                if(!idExist(value)){
+                    Leksem identifier = new Leksem(Main.id++, value.toLowerCase(), Category.IDENTIFIER, Type.IDENTIFIER, false);
+                    identifiers.add(identifier);
+                }
             }
-
         }
 
         private boolean idExist(String value){
-            return identifiers.stream().anyMatch(x-> x.getSymbol().equals(value));
+            return identifiers.stream().anyMatch(x-> x.getSymbol().equals(value.toLowerCase()));
         }
 
         private boolean constExist(String value){
-            return constants.stream().anyMatch(x-> x.getSymbol().equals(value));
+            return constants.stream().anyMatch(x-> x.getSymbol().equals(value.toLowerCase()));
         }
     /**
          * Определите, является ли это ключевым словом
@@ -93,7 +105,7 @@ public class Grammar {
         public boolean isKeyWord(String s)
         {
             for (Leksem keyWord : keyWords) {
-                if (keyWord.getSymbol().equals(s))
+                if (keyWord.getSymbol().equals(s.toLowerCase()))
                     return true;
             }
             return false;

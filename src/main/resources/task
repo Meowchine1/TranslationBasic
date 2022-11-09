@@ -125,9 +125,20 @@ ao  = + | -
 нотация Бэкуса
 
 <DoUntilStatement>  -> do until <Condition>  <Statement>  loop
-<Condition>     → <Operand>|<Operand> rel <Operand>
-<Operand>       → ID | CONST
+<Condition>     → <Operand>|<Operand> <rel> <Operand>
+<Operand>       → <ID> | <CONST>
 <Statement>     → ID = <ArithExpr>
-<ArithExpr>     → <Operand> | <ArithExpr> ao <Operand>
+<ArithExpr>     → <Operand> | <ArithExpr> <ao> <Operand>
+<rel> -> < | > | <= | >= | == | <>
+<ao> -> + | -
+<CONST> -> [-32768 - 32768]
+<ID> -> <letter> {<letters> | <digits>}
+<letter> -> a - z
+<letters> -> <letter> [<letters>]
+<digits> -> 0-9 [0-9]*
 
 
+DO THIS IN GRAMMAR:
+Чувствительности к регистру нет
+Идентификатор начинается с буквы, длина [1, 255]
+Значение константы  [-32768; 32768]

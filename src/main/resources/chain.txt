@@ -1,3 +1,4 @@
-do until a!=0
+U
+do until a<>0
 a=a-1
 loop

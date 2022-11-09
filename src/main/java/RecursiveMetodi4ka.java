@@ -1,5 +1,6 @@
 import alphabet.entities.base.Leksem;
 import alphabet.entities.base.Type;
+import exceptions.*;
 
 public class RecursiveMetodi4ka {
 
@@ -24,88 +25,89 @@ Hотация Бэкуса-Наура:
         this.tokens = tokens;
     }
 
-    Boolean DoUntilStatement()
-    {
+    public Boolean DoUntilStatement() throws DoException, UntilException, ConstOrIdException, IdException, ConditionExpectedException, StatementExpectedException, LoopExpectedException, UnexpectedSymbols, AsException {
         if(!posExist()){return false;}
 
-        if (tokens[pos].getType().compareTo(Type.DO) == 0 )
+        if (tokens[pos].getType() != Type.DO)
         {
-            System.out.println("Ожидается do" + pos);
-            return false;
+            throw new DoException("Expected <DO> position[" + pos + "]");
         }
         pos++;
         if(!posExist()){return false;}
 
-        if (tokens[pos].getType().compareTo(Type.UNTIL) == 0)
+        if (tokens[pos].getType() != Type.UNTIL)
         {
-            System.out.println("Ожидается until" + pos);
-            return false;
+            throw new UntilException("Expected <UNTIL> position[" + pos + "]");
         }
 
         pos++;
-        if(!posExist()){return false;}
-
-        if (!Condition())
+        if(!posExist()){
             return false;
+        }
 
-        if (!Statement()) return false;
+        if (!Condition()){
+            throw new ConditionExpectedException("<Condition> expected position[" + pos + "]");
+        }
 
-        if (tokens[pos].getType().compareTo(Type.LOOP) == 0)
+        if (!Statement()) {
+            throw new StatementExpectedException("<Statement> expected position[" + pos + "]");
+        }
+
+
+        if (tokens[pos].getType() != Type.LOOP)
         {
-            System.out.println("Ожидается loop" + pos);
-            return false;
+            throw new LoopExpectedException("Expected <LOOP> position[" + pos + "]");
         }
         pos++;
 
         if (posExist()) {
-            System.out.println("Лишние символы" + pos);
-            return false;
+            throw new UnexpectedSymbols("Unexpected symbols position[" + pos + "]");
         }
         return true;
     }
-    Boolean Condition()
-    {
+    Boolean Condition() throws ConstOrIdException {
         if (!Operand()) {
             return false;
         }
-        if (tokens[pos].getType().compareTo(Type.REL) > 0) {  // если оператор,
+        if (tokens[pos].getType() == Type.REL) {  // если оператор,
             pos++;
             return Operand(); // то ожидаем константу или ид
         }
         return true;
     }
-    Boolean Operand()
-    {
-        if ((tokens[pos].getType().compareTo(Type.IDENTIFIER) == 0
-                        && tokens[pos].getType().compareTo(Type.CONSTANT) == 0 ))
+    Boolean Operand() throws ConstOrIdException {
+        if ((tokens[pos].getType() != Type.IDENTIFIER)
+                        && (tokens[pos].getType() != Type.CONSTANT) )
         {
-            System.out.println("Ожидается переменная или константа " + pos);
-            return false;
+            throw new ConstOrIdException("<Const> or <ID> expected position[" + pos + "]");
         }
         pos++; // если идентификатор или константа --> продолжаем анализ
+        //<rel>
+
         return posExist();
     }
 
-    Boolean Statement()
-    {
-        if (tokens[pos].getType().compareTo(Type.IDENTIFIER) == 0) {
-            System.out.println("Ожидается переменная " + pos);
-            return false;
+    Boolean Rel(){
+        return true;
+    }
+
+    Boolean Statement() throws IdException, ConstOrIdException, AsException {
+        if (tokens[pos].getType() != Type.IDENTIFIER) {
+            throw new IdException("<ID> expected position[" + pos + "]");
         }
         pos++;
-        if (tokens[pos].getType().compareTo(Type.AS) == 0) {
-            System.out.println("Ожидается присваивание " + pos);
-            return false; }
+        if (tokens[pos].getType() != Type.AS) {
+            throw new AsException("<as> expected position[" + pos + "]");
+        }
         pos++;
 
         return ArithExpr();
     }
-    Boolean ArithExpr()
-    {
+    Boolean ArithExpr() throws ConstOrIdException {
         if (!Operand()){
             return false;
         }
-        while (posExist() && tokens[pos].getType().compareTo(Type.AO) > 0) {
+        while (posExist() && tokens[pos].getType() == Type.AO) {
             pos++;
             if (!Operand()) {
                 return false;
