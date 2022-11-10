@@ -1,3 +1,5 @@
+package alphabet.reading;
+
 import alphabet.entities.base.Category;
 import alphabet.entities.base.Leksem;
 import alphabet.entities.base.Type;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ReadTerminalSymbols {
+    private static int id = 0;
     public ArrayList<Leksem> keyWords = new ArrayList<>();
     public ArrayList<Leksem> operators = new ArrayList<>();
 
@@ -29,13 +32,13 @@ public class ReadTerminalSymbols {
             doc.getDocumentElement().normalize();
 
             NodeList keys = doc.getElementsByTagName("KEY");
-            keyWords.addAll(getKeys(Main.id,keys));
+            keyWords.addAll(getKeys(keys));
             NodeList specialRel = doc.getElementsByTagName("rel");
-            operators.addAll(getLeksems(Main.id, specialRel, Type.REL));
+            operators.addAll(getLeksems(specialRel, Type.REL));
             NodeList specialAs = doc.getElementsByTagName("as");
-            operators.addAll(getLeksems(Main.id, specialAs, Type.AS));
+            operators.addAll(getLeksems(specialAs, Type.AS));
             NodeList specialAo = doc.getElementsByTagName("ao");
-            operators.addAll(getLeksems(Main.id, specialAo, Type.AO));
+            operators.addAll(getLeksems(specialAo, Type.AO));
 
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -46,7 +49,7 @@ public class ReadTerminalSymbols {
 
     public ReadTerminalSymbols() {}
 
-    private ArrayList<Leksem> getKeys(int id, NodeList nodeList){
+    private ArrayList<Leksem> getKeys( NodeList nodeList){
         ArrayList<Leksem> leksems = new ArrayList<>();
         Boolean isDelimiter = false;
         Category category = Category.KEYWORD;
@@ -72,7 +75,7 @@ public class ReadTerminalSymbols {
         return leksems;
     }
 
-    private ArrayList<Leksem> getLeksems(int id, NodeList nodeList, Type type){
+    private ArrayList<Leksem> getLeksems(NodeList nodeList, Type type){
         ArrayList<Leksem> leksems = new ArrayList<>();
         Boolean isDelimiter = true;
         for (int temp = 0; temp < nodeList.getLength(); temp++) {

@@ -1,13 +1,12 @@
 import alphabet.entities.base.Leksem;
-import alphabet.entities.base.Type;
-import exceptions.ConstValueException;
-import exceptions.IdSizeException;
+import alphabet.reading.ReadTerminalSymbols;
+import exceptions.*;
 
 import java.io.IOException;
 
 public class Main {
 public static int id = 0;
-    public static void main(String[] args) throws IOException, ConstValueException, IdSizeException {
+    public static void main(String[] args) throws IOException, ConstValueException, IdSizeException, LoopExpectedException, ConstOrIdException, ConditionExpectedException, UnexpectedSymbols, UntilException, AsException, DoException, IdException, StatementExpectedException, IndefiniteCommandException {
         String chain = "";
         ReadTerminalSymbols readTerminalSymbols = new ReadTerminalSymbols();
         for (int i = 0; i< args.length; i++){
@@ -28,6 +27,8 @@ public static int id = 0;
         RecursiveMetodi4ka recursiveMetodi4ka =
                 new RecursiveMetodi4ka(analaizer.getTokens().toArray(Leksem[]::new));
         recursiveMetodi4ka.DoUntilStatement();
+
+        recursiveMetodi4ka.poliz.print();
 
     }
 }
