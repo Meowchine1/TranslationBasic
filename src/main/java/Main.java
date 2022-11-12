@@ -1,3 +1,4 @@
+import alphabet.Grammar;
 import alphabet.entities.base.Leksem;
 import alphabet.reading.ReadTerminalSymbols;
 import exceptions.*;
@@ -5,7 +6,7 @@ import exceptions.*;
 import java.io.IOException;
 
 public class Main {
-public static int id = 0;
+
     public static void main(String[] args) throws IOException, ConstValueException, IdSizeException, LoopExpectedException, ConstOrIdException, ConditionExpectedException, UnexpectedSymbols, UntilException, AsException, DoException, IdException, StatementExpectedException, IndefiniteCommandException {
         String chain = "";
         ReadTerminalSymbols readTerminalSymbols = new ReadTerminalSymbols();
@@ -25,7 +26,7 @@ public static int id = 0;
         analaizer.analyze();
         //analaizer.print();
         RecursiveMetodi4ka recursiveMetodi4ka =
-                new RecursiveMetodi4ka(analaizer.getTokens().toArray(Leksem[]::new));
+                new RecursiveMetodi4ka(analaizer.getTokens().toArray(Leksem[]::new), grammar);
         recursiveMetodi4ka.DoUntilStatement();
 
         recursiveMetodi4ka.poliz.print();

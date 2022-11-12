@@ -1,3 +1,4 @@
+import alphabet.Grammar;
 import alphabet.entities.base.Leksem;
 import alphabet.entities.base.Type;
 import exceptions.*;
@@ -6,7 +7,8 @@ import poliz.Poliz;
 
 public class RecursiveMetodi4ka {
 
-    protected Poliz poliz = new Poliz();
+    private Grammar grammar ;
+    protected Poliz poliz ;
 
     private Boolean posExist(){
         return pos < tokens.length;
@@ -15,15 +17,17 @@ public class RecursiveMetodi4ka {
     private final Leksem[] tokens;
     private int pos = 0; // индекс текущего токена
 
-    public RecursiveMetodi4ka(Leksem[] tokens) {
+    public RecursiveMetodi4ka(Leksem[] tokens, Grammar grammar) {
         this.tokens = tokens;
+        this.grammar = grammar;
+        poliz = new Poliz(this.grammar);
     }
 
     public Boolean DoUntilStatement() throws DoException, UntilException, ConstOrIdException, IdException,
             ConditionExpectedException, StatementExpectedException, LoopExpectedException, UnexpectedSymbols,
             AsException, IndefiniteCommandException {
 
-        int addresFirst = poliz.getPostfixSize(); // address of the beginning of the cycle
+        int addressFirst = poliz.getPostfixSize(); // address of the beginning of the cycle
 
         if(!posExist()){return false;}
 
@@ -65,7 +69,7 @@ public class RecursiveMetodi4ka {
         }
         pos++;
 
-        poliz.WriteCmdPtr(addresFirst); //заносим адрес начала цикла
+        poliz.WriteCmdPtr(addressFirst); //заносим адрес начала цикла
         int indLast =  poliz.WriteCmd(CommandType.JMP); //заносим команду безусловного
         //перехода и сохраняем ее адрес
         poliz.SetCmdPtr(indJmp, indLast+1); //изменяем фиктивное значение

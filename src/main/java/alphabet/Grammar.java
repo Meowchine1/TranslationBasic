@@ -1,3 +1,5 @@
+package alphabet;
+
 import alphabet.entities.base.Category;
 import alphabet.entities.base.Leksem;
 import alphabet.entities.base.Type;
@@ -7,14 +9,15 @@ import exceptions.IdSizeException;
 import java.util.ArrayList;
 import java.util.Objects;
 public class Grammar {
+        private int id = 0;
         // Массив ключевых слов
-        private  ArrayList<Leksem> keyWords;
+        private  static ArrayList<Leksem> keyWords;
         // массив операторов
-        private  ArrayList<Leksem> operators;
+        private  static ArrayList<Leksem> operators;
         // Массив разделителей
-        private ArrayList<Leksem> constants = new ArrayList<>();
+        private static ArrayList<Leksem> constants = new ArrayList<>();
         //массив констант
-        private ArrayList<Leksem> identifiers = new ArrayList<>();
+        private static ArrayList<Leksem> identifiers = new ArrayList<>();
         //массив идентификаторов
 
         private final char[] separators = {',', ';', '{', '}', '(', ')', '[', ']', '_', ':', '.', '"', '\\', '\'', '?'};
@@ -63,12 +66,20 @@ public class Grammar {
         public Leksem getIdentifier(String value){
             return identifiers.stream().filter(x -> x.getSymbol().equals(value.toLowerCase())).findFirst().orElseThrow();
         }
+
+        public Leksem getConstant(int id){
+            return constants.stream().filter(x -> x.getId() == id).findFirst().orElseThrow();
+        }
+        public Leksem getIdentifier(int id){
+            return identifiers.stream().filter(x -> x.getId() == id).findFirst().orElseThrow();
+        }
+
 //[-32768; 32768]
         public void addConstant(String value) throws ConstValueException {
             int intValue = Integer.parseInt(value);
             if( intValue >= -32768 & intValue <= 32768 ){
                 if(!constExist(value)){
-                    Leksem constant = new Leksem(Main.id++, value.toLowerCase(), Category.CONSTANT, Type.CONSTANT, false);
+                    Leksem constant = new Leksem(id++, value.toLowerCase(), Category.CONSTANT, Type.CONSTANT, false);
                     constants.add(constant);
                 }
             }
@@ -83,7 +94,7 @@ public class Grammar {
             }
             else{
                 if(!idExist(value)){
-                    Leksem identifier = new Leksem(Main.id++, value.toLowerCase(), Category.IDENTIFIER, Type.IDENTIFIER, false);
+                    Leksem identifier = new Leksem(id++, value.toLowerCase(), Category.IDENTIFIER, Type.IDENTIFIER, false);
                     identifiers.add(identifier);
                 }
             }
