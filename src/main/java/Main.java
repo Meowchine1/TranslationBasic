@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ConstValueException, IdSizeException, LoopExpectedException, ConstOrIdException, ConditionExpectedException, UnexpectedSymbols, UntilException, AsException, DoException, IdException, StatementExpectedException, IndefiniteCommandException {
+    public static void main(String[] args) throws IOException, ConstValueException, IdSizeException, LoopExpectedException, ConstOrIdException, ConditionExpectedException, UnexpectedSymbols, UntilException, AsException, DoException, IdException, StatementExpectedException, IndefiniteCommandException, ConstConsistsAlphabetSymbolException {
         String chain = "";
         ReadTerminalSymbols readTerminalSymbols = new ReadTerminalSymbols();
         for (int i = 0; i< args.length; i++){
@@ -24,7 +24,7 @@ public class Main {
         Grammar grammar = new Grammar(readTerminalSymbols.keyWords, readTerminalSymbols.operators);
         Analaizer analaizer = new Analaizer(grammar, chain);
         analaizer.analyze();
-        //analaizer.print();
+       // analaizer.print();
         RecursiveMetodi4ka recursiveMetodi4ka =
                 new RecursiveMetodi4ka(analaizer.getTokens().toArray(Leksem[]::new), grammar);
         recursiveMetodi4ka.DoUntilStatement();

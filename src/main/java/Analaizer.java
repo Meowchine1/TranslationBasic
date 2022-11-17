@@ -2,6 +2,7 @@
 import alphabet.Grammar;
 import alphabet.entities.base.Leksem;
 import alphabet.reading.ReadFile;
+import exceptions.ConstConsistsAlphabetSymbolException;
 import exceptions.ConstValueException;
 import exceptions.IdSizeException;
 
@@ -38,7 +39,7 @@ public class Analaizer
         }
     }
 
-    public void analyze() throws IOException, IdSizeException, ConstValueException {
+    public void analyze() throws IOException, IdSizeException, ConstValueException, ConstConsistsAlphabetSymbolException {
         strToken = "";
 
         BIG_LOOP:
@@ -81,6 +82,10 @@ public class Analaizer
                         retract ();
                         grammar.addConstant(strToken);
                         tokens.add(grammar.getConstant(strToken));
+
+                    }
+                    else{
+                        throw new ConstConsistsAlphabetSymbolException();
                     }
 
                     strToken = "";

@@ -27,7 +27,7 @@ public class RecursiveMetodi4ka {
             ConditionExpectedException, StatementExpectedException, LoopExpectedException, UnexpectedSymbols,
             AsException, IndefiniteCommandException {
 
-        int addressFirst = poliz.getPostfixSize(); // address of the beginning of the cycle
+        int addressFirst = poliz.getPostfixSize(); // address of the beginning of the cycle WRONG
 
         if(!posExist()){return false;}
 
@@ -69,8 +69,9 @@ public class RecursiveMetodi4ka {
         }
         pos++;
 
-        poliz.WriteCmdPtr(addressFirst); //заносим адрес начала цикла
+
         int indLast =  poliz.WriteCmd(CommandType.JMP); //заносим команду безусловного
+        poliz.WriteCmdPtr(addressFirst); //заносим адрес начала цикла
         //перехода и сохраняем ее адрес
         poliz.SetCmdPtr(indJmp, indLast+1); //изменяем фиктивное значение
         //адреса условного перехода
@@ -108,12 +109,14 @@ public class RecursiveMetodi4ka {
             if(cmdType.equals(CommandType.INDEFINITE)){
                 throw new IndefiniteCommandException();
             }
-            poliz.WriteCmd(cmdType);
             pos++;
-            return Operand(); // то ожидаем константу или ид
+            boolean operandExist = Operand();
+            poliz.WriteCmd(cmdType);
+            return operandExist; // то ожидаем константу или ид
         }
         return true;
     }
+
     Boolean Operand() throws ConstOrIdException {
         if ((tokens[pos].getType() != Type.IDENTIFIER)
                         && (tokens[pos].getType() != Type.CONSTANT) )
@@ -134,11 +137,7 @@ public class RecursiveMetodi4ka {
         return posExist();
     }
 
-    Boolean Rel(){
-        return true;
-    }
-
-    Boolean Statement() throws IdException, ConstOrIdException, AsException {
+    Boolean Statement() throws IdException, ConstOrIdException, AsException, IndefiniteCommandException {
         if (tokens[pos].getType() != Type.IDENTIFIER) {
             throw new IdException("<ID> expected position[" + pos + "]");
         }
@@ -147,12 +146,15 @@ public class RecursiveMetodi4ka {
         if (tokens[pos].getType() != Type.AS) {
             throw new AsException("<as> expected position[" + pos + "]");
         }
-        poliz.WriteCmd(CommandType.SET);
-        pos++;
 
-        return ArithExpr();
+        pos++;
+        boolean arithExpr = ArithExpr();
+        poliz.WriteCmd(CommandType.SET);
+
+
+        return arithExpr;
     }
-    Boolean ArithExpr() throws ConstOrIdException {
+    Boolean ArithExpr() throws ConstOrIdException, IndefiniteCommandException {
         if (!Operand()){
             return false;
         }
@@ -168,7 +170,13 @@ public class RecursiveMetodi4ka {
             if (!Operand()) {
                 return false;
             }
-            poliz.WriteCmd(cmdType);
+
+            if(cmdType != CommandType.INDEFINITE){
+                poliz.WriteCmd(cmdType);
+            }
+            else{
+                throw new IndefiniteCommandException();
+            }
         }
         return true;
     }
