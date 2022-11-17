@@ -1,13 +1,14 @@
-package poliz;
+package poliz.entity;
 
-public class PostfixEntity {
-    private EntityType type;
+public class PostfixEntity implements Entity{
+    private EntityType entityType;
     private CommandType commandType;
     private int ID;
     private int ptr;
 
-    public EntityType getType() {
-        return type;
+
+    public EntityType getEntityType() {
+        return entityType;
     }
 
     public int getID() {
@@ -26,12 +27,22 @@ public class PostfixEntity {
         return ptr;
     }
 
+    @Override
+    public int getIntValue() {
+        return 0;
+    }
+
+    @Override
+    public boolean getBoolValue() {
+        return false;
+    }
+
     public void setID(int ID) {
         this.ID = ID;
     }
 
-    public PostfixEntity(EntityType type, CommandType commandType, int ID) {
-        this.type = type;
+    public PostfixEntity(EntityType entityType, CommandType commandType, int ID) {
+        this.entityType = entityType;
         this.ID = ID;
         this.commandType = commandType;
     }

@@ -1,6 +1,6 @@
-package alphabet.entities.base;
+package alphabet.entity;
 
-public enum Type {
+public enum LeksemType {
     REL,
     AS,
     AO,

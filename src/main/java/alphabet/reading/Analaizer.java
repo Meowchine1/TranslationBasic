@@ -1,7 +1,7 @@
+package alphabet.reading;
 
 import alphabet.Grammar;
-import alphabet.entities.base.Leksem;
-import alphabet.reading.ReadFile;
+import alphabet.entity.Leksem;
 import exceptions.ConstConsistsAlphabetSymbolException;
 import exceptions.ConstValueException;
 import exceptions.IdSizeException;

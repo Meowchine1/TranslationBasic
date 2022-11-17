@@ -1,13 +1,14 @@
 package alphabet;
 
-import alphabet.entities.base.Category;
-import alphabet.entities.base.Leksem;
-import alphabet.entities.base.Type;
+import alphabet.entity.Category;
+import alphabet.entity.Leksem;
+import alphabet.entity.LeksemType;
 import exceptions.ConstValueException;
 import exceptions.IdSizeException;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.awt.*;
+import java.util.*;
+
 public class Grammar {
         private int id = 0;
         // Массив ключевых слов
@@ -17,10 +18,16 @@ public class Grammar {
         // Массив разделителей
         private static ArrayList<Leksem> constants = new ArrayList<>();
         //массив констант
-        private static ArrayList<Leksem> identifiers = new ArrayList<>();
+        private static HashMap<Leksem, Integer> identifiers = new HashMap<>() ;
         //массив идентификаторов
 
-        private final char[] separators = {',', ';', '{', '}', '(', ')', '[', ']', '_', ':', '.', '"', '\\', '\'', '?'};
+
+
+        public static HashMap<Leksem, Integer> getIdentifiers() {
+            return identifiers;
+        }
+
+    private final char[] separators = {',', ';', '{', '}', '(', ')', '[', ']', '_', ':', '.', '"', '\\', '\'', '?'};
 
         public Grammar(ArrayList<Leksem> keyWords, ArrayList<Leksem> operators){
 
@@ -47,9 +54,10 @@ public class Grammar {
 
 
             System.out.println("\nident");
-            for(Leksem l : identifiers){
-                System.out.println(l.toString());
+            for (Map.Entry<Leksem, Integer> entry : identifiers.entrySet()){
+                System.out.println(entry.getKey().toString() + " = " + entry.getValue());
             }
+
         }
 
         public Leksem getKeyword(String value){
@@ -64,22 +72,32 @@ public class Grammar {
             return constants.stream().filter(x -> x.getSymbol().equals(value.toLowerCase())).findFirst().orElseThrow();
         }
         public Leksem getIdentifier(String value){
-            return identifiers.stream().filter(x -> x.getSymbol().equals(value.toLowerCase())).findFirst().orElseThrow();
+            return (Leksem) identifiers.entrySet().stream().filter(x -> x.getKey().getSymbol().equals(value.toLowerCase())).findFirst().orElseThrow();
         }
 
         public Leksem getConstant(int id){
             return constants.stream().filter(x -> x.getId() == id).findFirst().orElseThrow();
         }
         public Leksem getIdentifier(int id){
-            return identifiers.stream().filter(x -> x.getId() == id).findFirst().orElseThrow();
+            return (Leksem) identifiers.entrySet().stream().filter(x -> x.getKey().getId() == id).findFirst().orElseThrow();
         }
 
-//[-32768; 32768]
+    public void setIdentifier(int id, Integer value){
+       for(Map.Entry<Leksem, Integer> entry : identifiers.entrySet() ){
+                if(entry.getKey().getId() == id){
+                    identifiers.put(entry.getKey(), value);
+
+                }
+       }
+
+    }
+
+
         public void addConstant(String value) throws ConstValueException {
             int intValue = Integer.parseInt(value);
             if( intValue >= -32768 & intValue <= 32768 ){
                 if(!constExist(value)){
-                    Leksem constant = new Leksem(id++, value.toLowerCase(), Category.CONSTANT, Type.CONSTANT, false);
+                    Leksem constant = new Leksem(id++, value.toLowerCase(), Category.CONSTANT, LeksemType.CONSTANT, false);
                     constants.add(constant);
                 }
             }
@@ -94,14 +112,17 @@ public class Grammar {
             }
             else{
                 if(!idExist(value)){
-                    Leksem identifier = new Leksem(id++, value.toLowerCase(), Category.IDENTIFIER, Type.IDENTIFIER, false);
-                    identifiers.add(identifier);
+                    Leksem identifier = new Leksem(id++, value.toLowerCase(), Category.IDENTIFIER, LeksemType.IDENTIFIER, false);
+                    System.out.println("Enter id value: "+ value + " =  ");
+                    Scanner in = new Scanner(System.in);
+                    int id_value = in.nextInt();
+                    identifiers.put(identifier, id_value);
                 }
             }
         }
 
         private boolean idExist(String value){
-            return identifiers.stream().anyMatch(x-> x.getSymbol().equals(value.toLowerCase()));
+            return identifiers.entrySet().stream().anyMatch(x-> x.getKey().getSymbol().equals(value.toLowerCase()));
         }
 
         private boolean constExist(String value){

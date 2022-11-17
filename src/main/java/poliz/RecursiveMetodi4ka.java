@@ -1,14 +1,15 @@
+package poliz;
+
 import alphabet.Grammar;
-import alphabet.entities.base.Leksem;
-import alphabet.entities.base.Type;
+import alphabet.entity.Leksem;
+import alphabet.entity.LeksemType;
 import exceptions.*;
-import poliz.CommandType;
-import poliz.Poliz;
+import poliz.entity.CommandType;
 
 public class RecursiveMetodi4ka {
 
-    private Grammar grammar ;
-    protected Poliz poliz ;
+    private Grammar grammar;
+    public Poliz poliz;
 
     private Boolean posExist(){
         return pos < tokens.length;
@@ -31,14 +32,14 @@ public class RecursiveMetodi4ka {
 
         if(!posExist()){return false;}
 
-        if (tokens[pos].getType() != Type.DO)
+        if (tokens[pos].getType() != LeksemType.DO)
         {
             throw new DoException("Expected <DO> position[" + pos + "]");
         }
         pos++;
         if(!posExist()){return false;}
 
-        if (tokens[pos].getType() != Type.UNTIL)
+        if (tokens[pos].getType() != LeksemType.UNTIL)
         {
             throw new UntilException("Expected <UNTIL> position[" + pos + "]");
         }
@@ -63,7 +64,7 @@ public class RecursiveMetodi4ka {
         }
         // сформирована часть ПОЛИЗа для тела цикла
 
-        if (tokens[pos].getType() != Type.LOOP)
+        if (tokens[pos].getType() != LeksemType.LOOP)
         {
             throw new LoopExpectedException("Expected <LOOP> position[" + pos + "]");
         }
@@ -90,7 +91,7 @@ public class RecursiveMetodi4ka {
         // сформирована часть ПОЛИЗа для вычисления
         // логического подвыражения
 
-        if (tokens[pos].getType() == Type.REL) {  // если оператор,
+        if (tokens[pos].getType() == LeksemType.REL) {  // если оператор,
             CommandType cmdType = CommandType.INDEFINITE;
             switch(tokens[pos].getId()){
                 case(5): cmdType = CommandType.L;
@@ -118,13 +119,13 @@ public class RecursiveMetodi4ka {
     }
 
     Boolean Operand() throws ConstOrIdException {
-        if ((tokens[pos].getType() != Type.IDENTIFIER)
-                        && (tokens[pos].getType() != Type.CONSTANT) )
+        if ((tokens[pos].getType() != LeksemType.IDENTIFIER)
+                        && (tokens[pos].getType() != LeksemType.CONSTANT) )
         {
             throw new ConstOrIdException("<Const> or <ID> expected position[" + pos + "]");
         }
 
-        if(tokens[pos].getType() == Type.IDENTIFIER){
+        if(tokens[pos].getType() == LeksemType.IDENTIFIER){
             poliz.WriteVar(tokens[pos].getId());
         }
         else{
@@ -138,12 +139,12 @@ public class RecursiveMetodi4ka {
     }
 
     Boolean Statement() throws IdException, ConstOrIdException, AsException, IndefiniteCommandException {
-        if (tokens[pos].getType() != Type.IDENTIFIER) {
+        if (tokens[pos].getType() != LeksemType.IDENTIFIER) {
             throw new IdException("<ID> expected position[" + pos + "]");
         }
         poliz.WriteVar(tokens[pos].getId());
         pos++;
-        if (tokens[pos].getType() != Type.AS) {
+        if (tokens[pos].getType() != LeksemType.AS) {
             throw new AsException("<as> expected position[" + pos + "]");
         }
 
@@ -158,7 +159,7 @@ public class RecursiveMetodi4ka {
         if (!Operand()){
             return false;
         }
-        while (posExist() && tokens[pos].getType() == Type.AO) {
+        while (posExist() && tokens[pos].getType() == LeksemType.AO) {
             CommandType cmdType = CommandType.INDEFINITE;
             if(tokens[pos].getId() == 12){
                 cmdType = CommandType.ADD;

@@ -1,4 +1,4 @@
-package alphabet.entities.base;
+package alphabet.entity;
 
 public enum Category {
     KEYWORD,

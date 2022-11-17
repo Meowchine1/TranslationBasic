@@ -1,4 +1,4 @@
-package poliz;
+package poliz.entity;
 
 public enum EntityType {
     CMD,

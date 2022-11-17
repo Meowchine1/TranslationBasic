@@ -1,8 +1,8 @@
 package alphabet.reading;
 
-import alphabet.entities.base.Category;
-import alphabet.entities.base.Leksem;
-import alphabet.entities.base.Type;
+import alphabet.entity.Category;
+import alphabet.entity.Leksem;
+import alphabet.entity.LeksemType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,11 +34,11 @@ public class ReadTerminalSymbols {
             NodeList keys = doc.getElementsByTagName("KEY");
             keyWords.addAll(getKeys(keys));
             NodeList specialRel = doc.getElementsByTagName("rel");
-            operators.addAll(getLeksems(specialRel, Type.REL));
+            operators.addAll(getLeksems(specialRel, LeksemType.REL));
             NodeList specialAs = doc.getElementsByTagName("as");
-            operators.addAll(getLeksems(specialAs, Type.AS));
+            operators.addAll(getLeksems(specialAs, LeksemType.AS));
             NodeList specialAo = doc.getElementsByTagName("ao");
-            operators.addAll(getLeksems(specialAo, Type.AO));
+            operators.addAll(getLeksems(specialAo, LeksemType.AO));
 
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -60,13 +60,13 @@ public class ReadTerminalSymbols {
             NodeList elem = element.getElementsByTagName("el");
 
             for(int i = 0; i< elem.getLength();i++){
-                Type type = switch (elem.item(i).getTextContent().toLowerCase()) {
-                    case "input" -> Type.INPUT;
-                    case "output" -> Type.OUTPUT;
-                    case "do" -> Type.DO;
-                    case "until" -> Type.UNTIL;
-                    case "loop" -> Type.LOOP;
-                    default -> Type.ERROR_TYPE;
+                LeksemType type = switch (elem.item(i).getTextContent().toLowerCase()) {
+                    case "input" -> LeksemType.INPUT;
+                    case "output" -> LeksemType.OUTPUT;
+                    case "do" -> LeksemType.DO;
+                    case "until" -> LeksemType.UNTIL;
+                    case "loop" -> LeksemType.LOOP;
+                    default -> LeksemType.ERROR_TYPE;
                 };
                 leksems.add(new Leksem(id++,elem.item(i).getTextContent(), category, type, isDelimiter));
             }
@@ -75,7 +75,7 @@ public class ReadTerminalSymbols {
         return leksems;
     }
 
-    private ArrayList<Leksem> getLeksems(NodeList nodeList, Type type){
+    private ArrayList<Leksem> getLeksems(NodeList nodeList, LeksemType type){
         ArrayList<Leksem> leksems = new ArrayList<>();
         Boolean isDelimiter = true;
         for (int temp = 0; temp < nodeList.getLength(); temp++) {

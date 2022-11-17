@@ -1,13 +1,13 @@
-package alphabet.entities.base;
+package alphabet.entity;
 
 public class Leksem {
     private int id;
     private String symbol;
     private Category category;
-    private Type type;
+    private LeksemType type;
     private Boolean isDelimiter;
 
-    public Leksem(int id, String symbol, Category category, Type type, Boolean isDelimiter) {
+    public Leksem(int id, String symbol, Category category, LeksemType type, Boolean isDelimiter) {
         this.id = id;
         this.symbol = symbol;
         this.category = category;
@@ -32,7 +32,7 @@ public class Leksem {
         return category;
     }
 
-    public Type getType() {
+    public LeksemType getType() {
         return type;
     }
 
