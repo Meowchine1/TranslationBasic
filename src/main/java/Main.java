@@ -29,14 +29,14 @@ public class Main {
         Grammar grammar = new Grammar(readTerminalSymbols.keyWords, readTerminalSymbols.operators);
         Analaizer analaizer = new Analaizer(grammar, chain);
         analaizer.analyze();
-        analaizer.print();
+      //  analaizer.print();
         RecursiveMetodi4ka recursiveMetodi4ka =
                 new RecursiveMetodi4ka(analaizer.getTokens().toArray(Leksem[]::new), grammar);
         recursiveMetodi4ka.DoUntilStatement();
 
         recursiveMetodi4ka.poliz.print();
 
-        Interpreter interpreter = new Interpreter(recursiveMetodi4ka.poliz.getPoliz(), grammar);
+        //  Interpreter interpreter = new Interpreter(recursiveMetodi4ka.poliz.getPoliz(), grammar);
 
     }
 }
