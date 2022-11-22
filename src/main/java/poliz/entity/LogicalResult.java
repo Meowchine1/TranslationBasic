@@ -41,4 +41,9 @@ public class LogicalResult implements Entity{
     public boolean getBoolValue() {
         return value;
     }
+
+    @Override
+    public String getValue() {
+        return (value)? "true" : "false";
+    }
 }

@@ -8,6 +8,10 @@ public class ArithResult implements Entity{
         this.value = value;
     }
 
+    public String getValue() {
+        return "" + value;
+    }
+
     @Override
     public EntityType getEntityType() {
         return null;

@@ -37,6 +37,11 @@ public class PostfixEntity implements Entity{
         return false;
     }
 
+    @Override
+    public String getValue() {
+        return commandType.name();
+    }
+
     public void setID(int ID) {
         this.ID = ID;
     }

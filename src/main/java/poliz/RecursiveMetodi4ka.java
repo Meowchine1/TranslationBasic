@@ -70,9 +70,9 @@ public class RecursiveMetodi4ka {
         }
         pos++;
 
-
-        int indLast =  poliz.WriteCmd(CommandType.JMP); //заносим команду безусловного
         poliz.WriteCmdPtr(addressFirst); //заносим адрес начала цикла
+        int indLast =  poliz.WriteCmd(CommandType.JMP); //заносим команду безусловного
+
         //перехода и сохраняем ее адрес
         poliz.SetCmdPtr(indJmp, indLast+1); //изменяем фиктивное значение
         //адреса условного перехода

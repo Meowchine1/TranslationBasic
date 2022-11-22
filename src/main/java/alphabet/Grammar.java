@@ -18,7 +18,7 @@ public class Grammar {
         // Массив разделителей
         private static ArrayList<Leksem> constants = new ArrayList<>();
         //массив констант
-        private static ArrayList<Leksem> identifiers = new ArrayList<>();
+        public static ArrayList<Leksem> identifiers = new ArrayList<>();
         //массив идентификаторов
 
 
@@ -82,14 +82,6 @@ public class Grammar {
             return identifiers.stream().filter(x -> x.getId() == id).findFirst().orElseThrow();
         }
 
-    public void setIdentifier(int id, Integer value){
-       for(Leksem entry : identifiers){
-                if(entry.getId() == id){
-                    identifiers.add(entry);
-                }
-       }
-
-    }
         public void addConstant(String value) throws ConstValueException {
             int intValue = Integer.parseInt(value);
             if( intValue >= -32768 & intValue <= 32768 ){

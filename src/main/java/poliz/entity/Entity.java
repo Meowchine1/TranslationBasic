@@ -9,4 +9,6 @@ public interface Entity {
     public int getPtr();
     public int getIntValue();
     public boolean getBoolValue();
+
+    String getValue();
 }

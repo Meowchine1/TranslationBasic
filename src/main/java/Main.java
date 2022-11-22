@@ -12,7 +12,7 @@ public class Main {
 
 
 
-    public static void main(String[] args) throws IOException, ConstValueException, IdSizeException, LoopExpectedException, ConstOrIdException, ConditionExpectedException, UnexpectedSymbols, UntilException, AsException, DoException, IdException, StatementExpectedException, IndefiniteCommandException, ConstConsistsAlphabetSymbolException {
+    public static void main(String[] args) throws IOException, ConstValueException, IdSizeException, LoopExpectedException, ConstOrIdException, ConditionExpectedException, UnexpectedSymbols, UntilException, AsException, DoException, IdException, StatementExpectedException, IndefiniteCommandException, ConstConsistsAlphabetSymbolException, EmptyPolizException {
         String chain = "";
         ReadTerminalSymbols readTerminalSymbols = new ReadTerminalSymbols();
         for (int i = 0; i < args.length; i++) {
@@ -36,7 +36,8 @@ public class Main {
 
         recursiveMetodi4ka.poliz.print();
 
-        //  Interpreter interpreter = new Interpreter(recursiveMetodi4ka.poliz.getPoliz(), grammar);
+          Interpreter interpreter = new Interpreter(recursiveMetodi4ka.poliz.getPoliz(), grammar);
+          interpreter.executePoliz();
 
     }
 }
