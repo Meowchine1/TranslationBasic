@@ -2,6 +2,7 @@ package poliz;
 
 import alphabet.Grammar;
 import alphabet.entity.Leksem;
+import de.vandermeer.asciitable.AsciiTable;
 import exceptions.EmptyPolizException;
 import poliz.entity.*;
 
@@ -20,6 +21,8 @@ public class Interpreter {
 
     private int i  = 0;
 
+    private AsciiTable at = new AsciiTable();
+
 
     public Interpreter(ArrayList<PostfixEntity> poliz, Grammar grammar) {
         this.poliz = poliz;
@@ -36,6 +39,7 @@ public class Interpreter {
     }
 
     public void executePoliz() throws EmptyPolizException {
+        initStackTrace();
         if (!poliz.isEmpty()) {
 
             int tmp;
@@ -43,7 +47,7 @@ public class Interpreter {
             while(pos < poliz.size()){
                 PostfixEntity entity = poliz.get(pos);
                 if(entity.getEntityType() ==  EntityType.CMD){
-//if enntity type ptr -- то не команда
+                    //if enntity type ptr -- то не команда
                     CommandType commandType = entity.getCommandType();
                     CommandType[] commandTypes = CommandType.values();
                     for(CommandType command : commandTypes){
@@ -52,7 +56,7 @@ public class Interpreter {
                             switch(command){
                                 case JMP:
                                     pos  = stack.pop().getPtr();
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case JZ:
                                     tmp = stack.pop().getIntValue();// 12
@@ -62,51 +66,51 @@ public class Interpreter {
                                     else{
                                         pos = tmp;
                                     }
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case L:
                                     pushVal(popVal(stack.pop()) < popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case LE:
                                     pushVal(popVal(stack.pop()) <= popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case G:
                                     pushVal(popVal(stack.pop()) > popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case GE:
                                     pushVal(popVal(stack.pop()) >= popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case E:
                                     pushVal(popVal(stack.pop()) == popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case NE:
                                   pushVal(popVal(stack.pop()) != popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case ADD:
                                     pushVal(popVal(stack.pop()) + popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case SUB:
                                     pushVal( - popVal(stack.pop()) + popVal(stack.pop()));
                                     pos++;
-                                    printStackTrace();
+                                    addStackTrace();
                                     break;
                                 case SET:
                                     setVarAndPop(stack.pop().getIntValue());
-                                    printStackTrace();
+                                    addStackTrace();
                                     pos++;
                                     break;
                             }
@@ -138,7 +142,7 @@ public class Interpreter {
                             pos++;
                         }
                     }
-                    printStackTrace();
+                    addStackTrace();
                 }
             }
         }
@@ -157,13 +161,33 @@ public class Interpreter {
         return Boolean.parseBoolean(entity.getValue());
     }
 
-    private void printStackTrace(){
 
-        System.out.println("шаг " + i++ );
+
+    private void initStackTrace(){
+        at.addRule();
+        at.addRow("Шаг", "Стек", "Значение переменной");
+        at.addRule();
+    }
+
+    private void addStackTrace(){
+        StringBuilder stackParams = new StringBuilder();
+        StringBuilder idParams = new StringBuilder();
+
         for(Entity e : stack){
-            System.out.print("[" + e.getValue() + "] ");
+            stackParams.append("[").append(e.getValue()).append("] ");
+            //System.out.print("[" + e.getValue() + "] ");
         }
-        System.out.println("\n_____");
+        for(HashMap.Entry<Leksem, Integer> id : ident.entrySet()){
+            idParams.append("(").append(id.getKey().getSymbol()).append(" = ").append(id.getValue()).append(")");
+        }
+
+        at.addRow(i++, stackParams, idParams);
+        at.addRule();
+
+    }
+
+    public void printSatckTrace(){
+        System.out.println(at.render());
     }
 
     private void pushVal(int value) {
@@ -175,9 +199,8 @@ public class Interpreter {
         LogicalResult logicalResult= new LogicalResult(value);
         stack.push(logicalResult);
     }
-    
-    private void setVarAndPop(int value) {
 
+    private void setVarAndPop(int value) {
 
         int id = stack.pop().getID();
         for(HashMap.Entry<Leksem, Integer> entry : ident.entrySet()){

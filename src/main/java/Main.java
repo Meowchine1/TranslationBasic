@@ -38,6 +38,7 @@ public class Main {
 
           Interpreter interpreter = new Interpreter(recursiveMetodi4ka.poliz.getPoliz(), grammar);
           interpreter.executePoliz();
+          interpreter.printSatckTrace();
 
     }
 }
